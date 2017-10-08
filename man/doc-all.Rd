@@ -7,27 +7,27 @@
 \alias{px_dl}
 \title{Download data from the PX-Web API of Statistics Finland}
 \usage{
-px_nav(path = "", api = "http://pxnet2.stat.fi/PXWeb/api/v1/en/")
+px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 
-px_var(path = "", api = "http://pxnet2.stat.fi/PXWeb/api/v1/en/")
+px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 
 px_dl(path, var = NULL, simplify_strings = FALSE, na_omit = FALSE,
-  api = "http://pxnet2.stat.fi/PXWeb/api/v1/en/")
+  api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 }
 \arguments{
 \item{path}{suffix to the path after \code{api}.
 For \code{px_download} and \code{px_var} this must point to an actual
 dataset (ie. an url ending in .px), whereas for \code{px_nav} this should
 correspond to a partial path to a dataset (ie. an url that points to a
-directory). Defaults to \code{"/"}.}
+directory). Defaults to \code{""}.}
 
 \item{api}{The url to the API. Defaults to
-\code{"http://pxnet2.stat.fi/PXWeb/api/v1/en/"}, the PX-Web API of
+\code{"https://pxnet2.stat.fi/PXWeb/api/v1/en/"}, the PX-Web API of
 Statistics Finland.}
 
 \item{var}{The values of the dimensions to be queried as a tibble. Can be
-obtained by filtering from the result of \code{px_var}. If \code{NULL}, all
-the values of all the dimensions are returned.}
+obtained by filtering from the result of \code{px_var}. If \code{NULL}, the
+defaults are selected.}
 
 \item{simplify_strings}{If \code{TRUE}, the strings in the result (colnames,
 values of the dimensions) are set to all lowercase, all special characters
