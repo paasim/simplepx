@@ -41,3 +41,8 @@ handle_req_errors <- function(res) {
   if (!str_detect(pluck(res, "headers", "content-type"), "application/json"))
     stop("A non-JSON result obtained. Perhaps an invalid url?")
 }
+
+.onAttach <- function(...) {
+  ver <- utils::packageVersion("simplepx")
+  packageStartupMessage("This is simplepx version ", ver)
+}
