@@ -55,7 +55,7 @@ test_that("px_dl works as expeted with a dataset-page", {
 test_that("px_dl works as expeted with a var-argument", {
   path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
   df0 <- px_var(path) %>%
-    filter(.data$Year > 1990 & .data$`Sex of child` == "Both sexes")
+    filter(.data$Year > 1990 & .data$Child == "Both sexes")
   df1 <- px_dl(path, df0)
   vals_match <- map2_lgl(df0, select(df1, -matches("^value$")),
                          ~setequal(.x, .y))
