@@ -36,7 +36,7 @@ check_colname_comp <- function(col_names, res_json) {
 handle_req_errors <- function(res) {
   if (http_error(res))
     str_c("\nQuery returned with an error, see the message below:\n",
-          rawToChar(res$content)) %>% stop()
+          content(res, "text", "application/json", "UTF-8")) %>% stop()
 
   if (!str_detect(pluck(res, "headers", "content-type"), "application/json"))
     stop("A non-JSON result obtained. Perhaps an invalid url?")

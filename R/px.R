@@ -58,7 +58,7 @@ px_nav <- function(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/") {
 
   url <- str_c(api, path)
   res <- GET(url) %T>% handle_req_errors()
-  res_json <- rawToChar(res$content) %>% fromJSON()
+  res_json <- content(res, "text", "application/json", "UTF-8") %>% fromJSON()
 
   if (is.data.frame(res_json)) {
     as_tibble(res_json)
@@ -107,9 +107,9 @@ px_dl <- function(path, var = NULL, simplify_strings = FALSE, na_omit = FALSE,
     construct_body()
 
   # get the actual data as JSON
-  res <- POST(url, body = body) #%T>% handle_req_errors()
-  res_json <- remove_bom(res$content) %>%
-    rawToChar() %>%
+  res <- POST(url, body = body)
+  res$content <- remove_bom(res$content)
+  res_json <- content(res, "text", "application/json", "UTF-8") %>%
     fromJSON(simplifyVector = FALSE)
 
   str_proc <- if (simplify_strings) str_clean else identity
@@ -137,5 +137,5 @@ px_dl <- function(path, var = NULL, simplify_strings = FALSE, na_omit = FALSE,
 
   res_df <- bind_cols(res_dims, tibble(value = res_values))
 
-  if (na_omit) na.omit(res_df) else res_df
+  if (na_omit) drop_na(res_df) else res_df
 }
