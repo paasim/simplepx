@@ -15,19 +15,21 @@ Usage
 -----
 
     library(simplepx)
-
+    
+    # use the english api for this; the default is in finnish
+    api <- "https://pxnet2.stat.fi/PXWeb/api/v1/en/"
     # Navigate through the data set listing
-    px_nav()
+    px_nav(api = api)
     # check what data is available under StatFin
-    px_nav("StatFin/")
+    px_nav("StatFin/", api = api)
     # navigate through the directories,
     # check what variables are available for population statistics
-    var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_011.px")
+    var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_011.px", api = api)
     # select years after 1900
     var_1900 <- dplyr::filter(var, Year >= 1900)
     # Download the data, starting from year 1900,
     # omitting the var-argument would download the data for all the years.
     data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_011.px", var_1900,
-                  simplify_strings = TRUE)
+                  simplify_colnames = TRUE, api = api)
 
 
