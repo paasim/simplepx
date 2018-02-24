@@ -16,7 +16,8 @@
 #'  pluck reduce set_names
 #' @importFrom readr parse_number
 #' @importFrom rlang .data "!!" ":="
-#' @importFrom stringr str_c str_detect str_replace_all
+#' @importFrom stringi stri_trans_general
+#' @importFrom stringr str_c str_detect str_replace_all str_squish
 #' @importFrom tibble as_tibble tibble
 #' @importFrom tidyr crossing drop_na gather nest unnest
 NULL

@@ -20,10 +20,12 @@ construct_body <- function(var_code) {
 # remove the byte-order-mark that causes problems with jsonlite
 remove_bom <- function(r)  if (all(r[1:3]==c("ef","bb","bf"))) r[-(1:3)] else r
 
-# remove umlauts and all special characters; set all to lowercase
+# remove accents and switch spaces to underscores
 str_clean <- function(s) {
-  str_map <- set_names(c("_", "a", "o", ""), c(" ", "\u00e4", "\u00f6", "[^0-9a-z_]"))
-  str_replace_all(tolower(s), str_map)
+  stri_trans_general(s, "latin-ascii") %>%
+    str_squish() %>%
+    str_replace_all(" ", "_") %>%
+    tolower()
 }
 
 # check that the result contains as many column names as there are columns

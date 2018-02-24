@@ -55,25 +55,26 @@ test_that("px_dl works as expeted with a dataset-page", {
 test_that("px_dl works as expeted with a var-argument", {
   path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
   df0 <- px_var(path) %>%
-    filter(.data$Year > 1990 & .data$Child == "Both sexes")
+    filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Pojat")
   df1 <- px_dl(path, df0)
   vals_match <- map2_lgl(df0, select(df1, -matches("^value$")),
                          ~setequal(.x, .y))
   expect_true(all(vals_match))
 })
 
-test_that("px_dl works as expeted with simplify_strings, na_omit = TRUE", {
-  path <- "StatFin/ene/ehi/statfin_ehi_pxt_001_en.px"
-  var <- px_var(path) %>% filter(.data$Year == 2001 & .data$Season == "Q1")
+test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
+  path <- "StatFin/ene/ehi/statfin_ehi_pxt_001_fi.px"
+  var <- px_var(path) %>% filter(.data$Vuosi == 2001)
   df1 <- px_dl(path, var)
   df2 <- px_dl(path, var, na_omit = TRUE)
+  expect_true(nrow(df2) > 0L)
   expect_true(nrow(df2) < nrow(df1))
 
-  df_dims <- px_dl(path, var, simplify_strings = TRUE) %>%
-    select(-matches("^value$"))
-  spaces <- map_lgl(df_dims, ~any(str_detect(.x, " ")))
-  expect_false(any(spaces))
-
-  lower <- map_df(df_dims, tolower)
-  expect_identical(df_dims, lower)
+  df_dims <- px_dl(path, var, simplify_colnames = TRUE) %>%
+    colnames()
+  df2_colnames_lower <- colnames(df2) %>%
+    stri_trans_general("latin-ascii") %>%
+    tolower() %>%
+    str_squish()
+  expect_identical(df_dims, df2_colnames_lower)
 })

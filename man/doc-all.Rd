@@ -7,12 +7,12 @@
 \alias{px_dl}
 \title{Download data from the PX-Web API of Statistics Finland}
 \usage{
-px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
-px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
-px_dl(path, var = NULL, simplify_strings = FALSE, na_omit = FALSE,
-  api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+px_dl(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
+  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 }
 \arguments{
 \item{path}{suffix to the path after \code{api}.
@@ -22,17 +22,15 @@ correspond to a partial path to a dataset (ie. an url that points to a
 directory). Defaults to \code{""}.}
 
 \item{api}{The url to the API. Defaults to
-\code{"https://pxnet2.stat.fi/PXWeb/api/v1/en/"}, the PX-Web API of
+\code{"https://pxnet2.stat.fi/PXWeb/api/v1/fi/"}, the Finnish PX-Web API of
 Statistics Finland.}
 
 \item{var}{The values of the dimensions to be queried as a tibble. Can be
 obtained by filtering from the result of \code{px_var}. If \code{NULL}, the
 defaults are selected.}
 
-\item{simplify_strings}{If \code{TRUE}, the strings in the result (colnames,
-values of the dimensions) are set to all lowercase, all special characters
-are removed and spaces are replaced by underscores. Defaults to
-\code{FALSE}.}
+\item{simplify_colnames}{If \code{TRUE}, the colnames are transformed to
+ascii, lowercase and spaces are replaced with underscores.}
 
 \item{na_omit}{If \code{TRUE}, all missing values are omitted.
 Defaults to \code{FALSE}.}
@@ -62,13 +60,15 @@ px_nav()
 px_nav("StatFin/")
 # navigate through the directories,
 # check what variables are available for population statistics
-var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_011.px")
+var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_011.px",
+              "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 # select years after 1900
 var_1900 <- dplyr::filter(var, Year >= 1900)
 # Download the data, starting from year 1900,
 # omitting the var-argument would download the data for all the years.
-data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_011.px", var_1900,
-              simplify_strings = TRUE)
+data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_011.px",
+              var = var_1900, simplify_colnames = TRUE,
+              api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 }
 
 }
