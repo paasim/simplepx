@@ -18,6 +18,6 @@
 #' @importFrom rlang .data "!!" ":="
 #' @importFrom stringi stri_trans_general
 #' @importFrom stringr str_c str_detect str_replace_all str_squish
-#' @importFrom tibble as_tibble tibble
+#' @importFrom tibble as_tibble is.tibble tibble
 #' @importFrom tidyr crossing drop_na gather nest unnest
 NULL

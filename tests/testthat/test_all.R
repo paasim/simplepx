@@ -1,16 +1,16 @@
 context("px_nav")
 test_that("px_nav works as expected with the default argument", {
   df1 <- px_nav()
-  expect_true("tbl_df" %in% class(df1))
+  expect_true(is.tibble(df1))
   expect_true(nrow(df1) > 0)
-  expect_identical(colnames(df1), c("dbid", "text"))
+  expect_named(df1, c("dbid", "text"))
 })
 
-test_that("px_nav works as expetec with a dataset-page", {
+test_that("px_nav works as expeted with a dataset-page", {
   res <- px_nav("StatFin/vrm/synt/statfin_synt_pxt_001.px")
-  expect_true(class(res) == "list")
-  expect_equal(names(res), c("title", "variables"))
-  expect_true("tbl_df" %in% class(res$variables))
+  expect_true(is.list(res))
+  expect_named(res, c("title", "variables"))
+  expect_true(is.tibble(res$variables))
   expect_true(nrow(res$variables) > 0)
   cols_exp <- c("code", "text", "values", "valueTexts")
   expect_true(all(cols_exp %in% colnames(res$variables)))
@@ -25,8 +25,8 @@ test_that("px_var works as expeted with a dataset-page", {
   path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
   res <- px_nav(path)
   df1 <- px_var(path)
-  expect_true("tbl_df" %in% class(df1))
-  expect_equal(colnames(df1), res$variables$text)
+  expect_true(is.tibble(df1))
+  expect_named(df1, res$variables$text)
   rows_exp <- map_int(res$variables$valueTexts, length) %>% prod()
   expect_equal(nrow(df1), rows_exp)
   vals_match <- map2_lgl(res$variables$valueTexts, df1, ~setequal(.x, .y))
@@ -73,7 +73,7 @@ test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
   df_dims <- px_dl(path, var, simplify_colnames = TRUE) %>%
     colnames()
   df2_colnames_lower <- colnames(df2) %>%
-    stri_trans_general("latin-ascii") %>%
+    stringi::stri_trans_general("latin-ascii") %>%
     tolower() %>%
     str_squish()
   expect_identical(df_dims, df2_colnames_lower)
