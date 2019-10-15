@@ -61,9 +61,9 @@ px_nav <- function(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
   res_json <- content(res, "text", "application/json", "UTF-8") %>% fromJSON()
 
   if (is.data.frame(res_json)) {
-    as_tibble(res_json)
+    as_tibble(res_json, .name_repair = "unique")
   } else {
-    modify_if(res_json, is.data.frame, as_tibble)
+    modify_if(res_json, is.data.frame, as_tibble, .name_repair = "unique")
   }
 }
 
