@@ -1,7 +1,7 @@
 context("px_nav")
 test_that("px_nav works as expected with the default argument", {
   df1 <- px_nav()
-  expect_true(is.tibble(df1))
+  expect_true(is_tibble(df1))
   expect_true(nrow(df1) > 0)
   expect_named(df1, c("dbid", "text"))
 })
@@ -10,7 +10,7 @@ test_that("px_nav works as expeted with a dataset-page", {
   res <- px_nav("StatFin/vrm/synt/statfin_synt_pxt_001.px")
   expect_true(is.list(res))
   expect_named(res, c("title", "variables"))
-  expect_true(is.tibble(res$variables))
+  expect_true(is_tibble(res$variables))
   expect_true(nrow(res$variables) > 0)
   cols_exp <- c("code", "text", "values", "valueTexts")
   expect_true(all(cols_exp %in% colnames(res$variables)))
@@ -25,7 +25,7 @@ test_that("px_var works as expeted with a dataset-page", {
   path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
   res <- px_nav(path)
   df1 <- px_var(path)
-  expect_true(is.tibble(df1))
+  expect_true(is_tibble(df1))
   expect_named(df1, res$variables$text)
   rows_exp <- map_int(res$variables$valueTexts, length) %>% prod()
   expect_equal(nrow(df1), rows_exp)
@@ -57,7 +57,7 @@ test_that("px_dl works as expeted with a var-argument", {
   df0 <- px_var(path) %>%
     filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Pojat")
   df1 <- px_dl(path, df0)
-  vals_match <- map2_lgl(df0, select(df1, -matches("^value$")),
+  vals_match <- map2_lgl(df0, select(df1, -.data$value),
                          ~setequal(.x, .y))
   expect_true(all(vals_match))
 })

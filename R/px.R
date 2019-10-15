@@ -124,7 +124,7 @@ px_dl <- function(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
   var_maps_inv <- map(var_maps[col_names], ~set_names(names(.x), .x))
 
   # get the dimensions of the data
-  res_dims <- map_df(res_json$data, ~t(.x$key) %>% as_tibble()) %>%
+  res_dims <- map_df(res_json$data, ~t(.x$key) %>% as_tibble(.name_repair = "unique")) %>%
     mutate_all(unlist) %>%
     map2_df(var_maps_inv, ~.y[.x]) %>%
     set_names(str_proc(col_names))
