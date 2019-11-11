@@ -42,6 +42,11 @@ test_that("px_dl gives an error with a non-dataset-page", {
   expect_error(px_dl(""), "contain a dataset")
 })
 
+test_that("px_dl gives an error when HTTP status code is not 200", {
+  expect_error(px_dl("StatFin/asu/ashi/nj/statfin_ashi_pxt_112q.px"),
+               "Request failed with")
+})
+
 test_that("px_dl works as expeted with a dataset-page", {
   path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
   df0 <- px_var(path)

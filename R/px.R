@@ -57,7 +57,11 @@
 px_nav <- function(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
 
   url <- str_c(api, path)
-  res <- GET(url) %T>% handle_req_errors()
+  res <- GET(url)
+
+  handle_req_errors(res)
+  handle_http_errors(res)
+
   res_json <- content(res, "text", "application/json", "UTF-8") %>% fromJSON()
 
   if (is.data.frame(res_json)) {
@@ -108,6 +112,9 @@ px_dl <- function(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
 
   # get the actual data as JSON
   res <- POST(url, body = body)
+
+  handle_http_errors(res)
+
   res$content <- remove_bom(res$content)
   res_json <- content(res, "text", "application/json", "UTF-8") %>%
     fromJSON(simplifyVector = FALSE)

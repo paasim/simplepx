@@ -44,6 +44,15 @@ handle_req_errors <- function(res) {
     stop("A non-JSON result obtained. Perhaps an invalid url?")
 }
 
+handle_http_errors <- function(res) {
+  status <- http_status(res)
+  if (status$category != "Success")
+    stop(str_c("Request failed with '", status$message,
+               "', perhaps trying to download over a file",
+               "that is bigger than the API limit (1M rows)?"))
+}
+
+
 .onAttach <- function(...) {
   ver <- utils::packageVersion("simplepx")
   packageStartupMessage("This is simplepx version ", ver)

@@ -9,7 +9,7 @@
 #'
 #' @importFrom dplyr bind_cols bind_rows filter matches mutate mutate_all pull
 #'  select
-#' @importFrom httr content GET http_error POST
+#' @importFrom httr content GET http_error http_status POST
 #' @importFrom jsonlite fromJSON toJSON unbox
 #' @importFrom magrittr "%>%" "%T>%"
 #' @importFrom purrr map map_int map_df map_lgl map2 map2_df map2_lgl modify_if
