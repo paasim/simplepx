@@ -82,7 +82,7 @@ px_var <- function(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
     stop("The page does not appear to contain a dataset.")
 
   map2(res$variables$text, res$variables$valueTexts, ~tibble(!!.x := .y)) %>%
-    reduce(crossing)
+    reduce(function(x, y) crossing(x, y))
 }
 
 #' @rdname doc-all
