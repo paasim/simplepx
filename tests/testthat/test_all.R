@@ -1,4 +1,8 @@
 context("px_nav")
+
+# path to a dataset for testing
+synt_path <- "StatFin/vrm/synt/statfin_synt_pxt_12dj.px"
+
 test_that("px_nav works as expected with the default argument", {
   df1 <- px_nav()
   expect_true(is_tibble(df1))
@@ -7,7 +11,7 @@ test_that("px_nav works as expected with the default argument", {
 })
 
 test_that("px_nav works as expeted with a dataset-page", {
-  res <- px_nav("StatFin/vrm/synt/statfin_synt_pxt_001.px")
+  res <- px_nav(synt_path)
   expect_true(is.list(res))
   expect_named(res, c("title", "variables"))
   expect_true(is_tibble(res$variables))
@@ -22,9 +26,8 @@ test_that("px_nav returns an error with non-valid url", {
 
 context("px_var")
 test_that("px_var works as expeted with a dataset-page", {
-  path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
-  res <- px_nav(path)
-  df1 <- px_var(path)
+  res <- px_nav(synt_path)
+  df1 <- px_var(synt_path)
   expect_true(is_tibble(df1))
   expect_named(df1, res$variables$text)
   rows_exp <- map_int(res$variables$valueTexts, length) %>% prod()
@@ -44,13 +47,12 @@ test_that("px_dl gives an error with a non-dataset-page", {
 
 test_that("px_dl gives an error when HTTP status code is not 200", {
   expect_error(px_dl("StatFin/asu/ashi/nj/statfin_ashi_pxt_112q.px"),
-               "Request failed with")
+               "returned with an error")
 })
 
 test_that("px_dl works as expeted with a dataset-page", {
-  path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
-  df0 <- px_var(path)
-  df1 <- px_dl(path)
+  df0 <- px_var(synt_path)
+  df1 <- px_dl(synt_path, df0)
   cols <- intersect(names(df1), names(df0))
   vals_match <- map2_lgl(select(df0, cols), select(df1, cols),
                          ~setequal(.x, .y))
@@ -58,28 +60,25 @@ test_that("px_dl works as expeted with a dataset-page", {
 })
 
 test_that("px_dl works as expeted with a var-argument", {
-  path <- "StatFin/vrm/synt/statfin_synt_pxt_001.px"
-  df0 <- px_var(path) %>%
-    filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Pojat")
-  df1 <- px_dl(path, df0)
-  vals_match <- map2_lgl(df0, select(df1, -.data$value),
-                         ~setequal(.x, .y))
+  df0 <- px_var(synt_path) %>%
+    filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Miehet")
+  df1 <- px_dl(synt_path, df0)
+  vals_match <- select(df0, -Tiedot) %>%
+    map2_lgl(select(df1, -matches("^value$")), ~setequal(.x, .y))
   expect_true(all(vals_match))
 })
 
+ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_001_fi.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
-  path <- "StatFin/ene/ehi/statfin_ehi_pxt_001_fi.px"
-  var <- px_var(path) %>% filter(.data$Vuosi == 2001)
-  df1 <- px_dl(path, var)
-  df2 <- px_dl(path, var, na_omit = TRUE)
+  var <- px_var(ene_path) %>% filter(.data$Vuosi == 2001)
+  df1 <- px_dl(ene_path, var)
+  df2 <- px_dl(ene_path, var, na_omit = TRUE)
   expect_true(nrow(df2) > 0L)
   expect_true(nrow(df2) < nrow(df1))
 
-  df_dims <- px_dl(path, var, simplify_colnames = TRUE) %>%
+  df_dims <- px_dl(ene_path, var, simplify_colnames = TRUE) %>%
     colnames()
-  df2_colnames_lower <- colnames(df2) %>%
-    stringi::stri_trans_general("latin-ascii") %>%
-    tolower() %>%
-    str_squish()
+  df2_colnames_lower <- c("polttoaine", "vuosi", "jakso", "tiedot", "value")
   expect_identical(df_dims, df2_colnames_lower)
 })
+

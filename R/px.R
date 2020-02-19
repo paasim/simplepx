@@ -17,8 +17,8 @@
 #'  correspond to a partial path to a dataset (ie. an url that points to a
 #'  directory). Defaults to \code{""}.
 #' @param var The values of the dimensions to be queried as a tibble. Can be
-#'  obtained by filtering from the result of \code{px_var}. If \code{NULL}, the
-#'  defaults are selected.
+#'  obtained by filtering from the result of \code{px_var}. If not specified,
+#'  px_var is called automatically.
 #' @param simplify_colnames If \code{TRUE}, the colnames are transformed to
 #'  ascii, lowercase and spaces are replaced with underscores.
 #' @param na_omit If \code{TRUE}, all missing values are omitted.
@@ -81,14 +81,15 @@ px_var <- function(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
   if (!("variables" %in% names(res)))
     stop("The page does not appear to contain a dataset.")
 
-  map2(res$variables$text, res$variables$valueTexts, ~tibble(!!.x := .y)) %>%
-    reduce(function(x, y) crossing(x, y))
+  set_names(res$variables$valueTexts, res$variables$text) %>%
+    lift_dl(expand_grid)()
 }
 
 #' @rdname doc-all
 #' @export
 #'
-px_dl <- function(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
+px_dl <- function(path, var = px_var(path, api),
+                  simplify_colnames = FALSE, na_omit = FALSE,
                   api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
 
   url <- str_c(api, path)
@@ -124,17 +125,16 @@ px_dl <- function(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
   # get colnames of all dimensions of type d and t
   col_names <- map_df(res_json$columns, ~.x[c("type", "text")]) %>%
     filter(.data$type %in% c("d", "t")) %>%
-    pull("text") %T>%
+    pluck("text") %T>%
     check_colname_comp(res_json)
 
   # map from code to text
   var_maps_inv <- map(var_maps[col_names], ~set_names(names(.x), .x))
 
   # get the dimensions of the data
-  res_dims <- map_df(res_json$data, ~t(.x$key) %>% as_tibble(.name_repair = "unique")) %>%
-    mutate_all(unlist) %>%
-    map2_df(var_maps_inv, ~.y[.x]) %>%
-    set_names(str_proc(col_names))
+  res_dims <- res_json$data %>%
+    map_df(~set_names(.x$key, str_proc(col_names)) %>% as_tibble()) %>%
+    map2_df(var_maps_inv, ~.y[.x])
 
   # get the actual values of the data
   res_values <- map(res_json$data, "values") %>%

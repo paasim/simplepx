@@ -11,8 +11,13 @@ px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
 px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
-px_dl(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
-  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
+px_dl(
+  path,
+  var = px_var(path, api),
+  simplify_colnames = FALSE,
+  na_omit = FALSE,
+  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/"
+)
 }
 \arguments{
 \item{path}{suffix to the path after \code{api}.
@@ -26,8 +31,8 @@ directory). Defaults to \code{""}.}
 Statistics Finland.}
 
 \item{var}{The values of the dimensions to be queried as a tibble. Can be
-obtained by filtering from the result of \code{px_var}. If \code{NULL}, the
-defaults are selected.}
+obtained by filtering from the result of \code{px_var}. If not specified,
+px_var is called automatically.}
 
 \item{simplify_colnames}{If \code{TRUE}, the colnames are transformed to
 ascii, lowercase and spaces are replaced with underscores.}
