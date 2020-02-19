@@ -1,34 +1,34 @@
 #' Download data from the PX-Web API of Statistics Finland
 #'
-#' \code{px_nav} is used to navigate the API: it returns the possible
+#' `px_nav` is used to navigate the API: it returns the possible
 #'  subdirectories as a tibble with dbid corresponding to the suffix in the url
 #'  that points to the given subdirectory.
 #'
-#'  \code{px_var} returns the values of the dimensions in the given table and
-#'  \code{px_dl} returns the actual data corresponding to variables specified
-#'  as the \code{var} argument. The format of the \code{var} argument is the
-#'  same as in the tibble returned by \code{px_var}, so the values can be
+#'  `px_var` returns the values of the dimensions in the given table and
+#'  `px_dl` returns the actual data corresponding to variables specified
+#'  as the `var` argument. The format of the `var` argument is the
+#'  same as in the tibble returned by `px_var`, so the values can be
 #'  selected by filtering that tibble. See the examples for mode information.
 #'
 #' @name doc-all
-#' @param path suffix to the path after \code{api}.
-#'  For \code{px_download} and \code{px_var} this must point to an actual
-#'  dataset (ie. an url ending in .px), whereas for \code{px_nav} this should
+#' @param path suffix to the path after `api`.
+#'  For `px_download` and `px_var` this must point to an actual
+#'  dataset (ie. an url ending in .px), whereas for `px_nav` this should
 #'  correspond to a partial path to a dataset (ie. an url that points to a
-#'  directory). Defaults to \code{""}.
+#'  directory). Defaults to `""`.
 #' @param var The values of the dimensions to be queried as a tibble. Can be
-#'  obtained by filtering from the result of \code{px_var}. If not specified,
+#'  obtained by filtering from the result of `px_var`. If not specified,
 #'  px_var is called automatically.
-#' @param simplify_colnames If \code{TRUE}, the colnames are transformed to
+#' @param simplify_colnames If `TRUE`, the colnames are transformed to
 #'  ascii, lowercase and spaces are replaced with underscores.
-#' @param na_omit If \code{TRUE}, all missing values are omitted.
-#'  Defaults to \code{FALSE}.
+#' @param na_omit If `TRUE`, all missing values are omitted.
+#'  Defaults to `FALSE`.
 #' @param api The url to the API. Defaults to
-#'  \code{"https://pxnet2.stat.fi/PXWeb/api/v1/fi/"}, the Finnish PX-Web API of
+#'  `"https://pxnet2.stat.fi/PXWeb/api/v1/fi/"`, the Finnish PX-Web API of
 #'  Statistics Finland.
 #'
-#' @return \code{px_dl} and \code{px_var} always return a tibble.
-#'  \code{px_nav} returns a tibble when request is sent to a non-table URL
+#' @return `px_dl` and `px_var` always return a tibble.
+#'  `px_nav` returns a tibble when request is sent to a non-table URL
 #'  (ie. an url corresponds to a directory rather than a particular data set).
 #'
 #' @examples
