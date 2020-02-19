@@ -1,3 +1,16 @@
+context("helpers")
+test_that("construct_body returns an expected result with an empty body", {
+  expect_equal(as.character(construct_body(tibble())),
+               '{"query":[],"response":{"format":"json"}}')
+})
+
+test_that("check_colname_comp errors with weird result", {
+  col_names <- "a"
+  res_json <- list(data = list(list(key = 1), list(key = c(1,2))))
+  expect_error(check_colname_comp(col_names, res_json), "Unexpected")
+})
+
+
 context("px_nav")
 
 # path to a dataset for testing
