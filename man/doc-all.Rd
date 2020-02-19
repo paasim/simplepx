@@ -11,8 +11,13 @@ px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
 px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
 
-px_dl(path, var = NULL, simplify_colnames = FALSE, na_omit = FALSE,
-  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
+px_dl(
+  path,
+  var = px_var(path, api),
+  simplify_colnames = FALSE,
+  na_omit = FALSE,
+  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/"
+)
 }
 \arguments{
 \item{path}{suffix to the path after \code{api}.
@@ -26,8 +31,8 @@ directory). Defaults to \code{""}.}
 Statistics Finland.}
 
 \item{var}{The values of the dimensions to be queried as a tibble. Can be
-obtained by filtering from the result of \code{px_var}. If \code{NULL}, the
-defaults are selected.}
+obtained by filtering from the result of \code{px_var}. If not specified,
+px_var is called automatically.}
 
 \item{simplify_colnames}{If \code{TRUE}, the colnames are transformed to
 ascii, lowercase and spaces are replaced with underscores.}
@@ -37,20 +42,20 @@ Defaults to \code{FALSE}.}
 }
 \value{
 \code{px_dl} and \code{px_var} always return a tibble.
- \code{px_nav} returns a tibble when request is sent to a non-table URL
- (ie. an url corresponds to a directory rather than a particular data set).
+\code{px_nav} returns a tibble when request is sent to a non-table URL
+(ie. an url corresponds to a directory rather than a particular data set).
 }
 \description{
 \code{px_nav} is used to navigate the API: it returns the possible
- subdirectories as a tibble with dbid corresponding to the suffix in the url
- that points to the given subdirectory.
+subdirectories as a tibble with dbid corresponding to the suffix in the url
+that points to the given subdirectory.
 }
 \details{
 \code{px_var} returns the values of the dimensions in the given table and
- \code{px_dl} returns the actual data corresponding to variables specified
- as the \code{var} argument. The format of the \code{var} argument is the
- same as in the tibble returned by \code{px_var}, so the values can be
- selected by filtering that tibble. See the examples for mode information.
+\code{px_dl} returns the actual data corresponding to variables specified
+as the \code{var} argument. The format of the \code{var} argument is the
+same as in the tibble returned by \code{px_var}, so the values can be
+selected by filtering that tibble. See the examples for mode information.
 }
 \examples{
 \donttest{

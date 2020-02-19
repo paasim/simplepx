@@ -3,7 +3,6 @@
 \docType{package}
 \name{simplepx}
 \alias{simplepx}
-\alias{simplepx-package}
 \title{SIMPLEPX}
 \description{
 An R package for accessing PX-Web APIs. The package might work with other

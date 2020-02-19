@@ -5,12 +5,14 @@ construct_body <- function(var_code) {
     query <- tibble()
   } else {
     # transform the tibble back to the original format
-    query <- gather(var_code, "code", "values") %>%
-      unique() %>%
-      nest(-"code", .key = "selection") %>%
-      mutate(selection = map(.data$selection,
+    query <- var_code %>%
+      pivot_longer(colnames(var_code), names_to = "code", values_to = "values") %>%
+      distinct() %>%
+      nest(data = "values") %>%
+      mutate(selection = map(.data$data,
                              # the actual values + {filter = item} for the JSON
-                             ~as.list(.x) %>% c(list(filter = unbox("item")))))
+                             ~c(list(filter = unbox("item")), as.list(.x)))) %>%
+      select(-.data$data)
   }
 
   list(query = query, response = unbox(tibble(format = "json"))) %>%
