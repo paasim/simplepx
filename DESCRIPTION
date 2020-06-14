@@ -1,7 +1,7 @@
 Package: simplepx
 Type: Package
 Title: An R package for accessing PX-Web APIs
-Version: 0.4.0
+Version: 0.4.1
 Author: Markus Paasiniemi [aut]
 Maintainer: Markus Paasiniemi <paasim@iki.fi>
 Description: An R package for accessing PX-Web APIs. The package might work
@@ -25,5 +25,5 @@ Suggests:
     testthat
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)

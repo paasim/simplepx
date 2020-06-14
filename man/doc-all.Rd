@@ -58,22 +58,20 @@ same as in the tibble returned by \code{px_var}, so the values can be
 selected by filtering that tibble. See the examples for mode information.
 }
 \examples{
-\donttest{
 # Navigate through the API
 px_nav()
 # check what data is available under StatFin
 px_nav("StatFin/")
 # navigate through the directories,
 # check what variables are available for population statistics
-var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_011.px",
+var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
               "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
 # select years after 1900
 var_1900 <- dplyr::filter(var, Year >= 1900)
 # Download the data, starting from year 1900,
 # omitting the var-argument would download the data for all the years.
-data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_011.px",
+data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
               var = var_1900, simplify_colnames = TRUE,
               api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
-}
 
 }
