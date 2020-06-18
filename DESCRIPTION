@@ -1,7 +1,7 @@
 Package: simplepx
 Type: Package
 Title: An R package for accessing PX-Web APIs
-Version: 0.4.1
+Version: 0.5.0
 Author: Markus Paasiniemi [aut]
 Maintainer: Markus Paasiniemi <paasim@iki.fi>
 Description: An R package for accessing PX-Web APIs. The package might work

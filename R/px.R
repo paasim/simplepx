@@ -104,7 +104,8 @@ px_dl <- function(path, var = px_var(path, api),
     set_names(names(colname_map))
 
   # map from values to valueTexts
-  body <- map2_df(var, var_maps, ~.y[.x]) %>%
+  body <- map2(var, var_maps, ~.y[.x]) %>%
+    bind_cols() %>%
     # map from text to code
     (function(x) set_names(x, colname_map[colnames(x)])) %>%
     construct_body()
@@ -132,7 +133,8 @@ px_dl <- function(path, var = px_var(path, api),
   # get the dimensions of the data
   res_dims <- res_json$data %>%
     map_df(~set_names(.x$key, str_proc(col_names)) %>% as_tibble()) %>%
-    map2_df(var_maps_inv, ~.y[.x])
+    map2(var_maps_inv, ~.y[.x]) %>%
+    bind_cols()
 
   # get the actual values of the data
   res_values <- map(res_json$data, "values") %>%
