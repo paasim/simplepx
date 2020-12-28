@@ -1,6 +1,6 @@
 # simplepx
 
-[![Build Status](https://travis-ci.org/paasim/simplepx.svg?branch=master)](https://travis-ci.org/paasim/simplepx)
+[![R build status](https://github.com/paasim/simplepx/workflows/R-CMD-check/badge.svg)](https://github.com/paasim/simplepx/actions)
 [![codecov](https://codecov.io/gh/paasim/simplepx/branch/master/graphs/badge.svg)](https://codecov.io/gh/paasim/simplepx)
 
 An R package for downloading data from the [PX-Web API of Statistics Finland](http://pxnet2.stat.fi/api1.html) in a tidy format for personal use. The package might work with other PX-Web APIs as well, but so far has only been tested with the API of Statistics Finland. Inspired by the [pxweb](https://github.com/rOpenGov/pxweb)-package, but with a lot less functionality.
