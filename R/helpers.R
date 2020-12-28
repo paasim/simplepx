@@ -50,8 +50,8 @@ handle_http_errors <- function(res) {
   status <- http_status(res)
   if (status$category != "Success")
     stop(str_c("Request failed with '", status$message,
-               "', perhaps trying to download over a file",
-               "that is bigger than the API limit (1M rows)?"))
+               "', perhaps trying to download a file ",
+               "that is bigger than the API limit allows (1M rows)?"))
 }
 
 
