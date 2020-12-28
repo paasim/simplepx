@@ -81,9 +81,9 @@ test_that("px_dl works as expeted with a var-argument", {
   expect_true(all(vals_match))
 })
 
-ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_001_fi.px"
+ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_12ge.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
-  var <- px_var(ene_path) %>% filter(.data$Vuosi == 2001)
+  var <- px_var(ene_path) %>% filter(.data$Kuukausi == "1988M06", Tiedot == "Hinta")
   df1 <- px_dl(ene_path, var)
   df2 <- px_dl(ene_path, var, na_omit = TRUE)
   expect_true(nrow(df2) > 0L)
@@ -91,7 +91,7 @@ test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
 
   df_dims <- px_dl(ene_path, var, simplify_colnames = TRUE) %>%
     colnames()
-  df2_colnames_lower <- c("polttoaine", "vuosi", "jakso", "tiedot", "value")
+  df2_colnames_lower <- c("kuukausi", "polttoneste", "value")
   expect_identical(df_dims, df2_colnames_lower)
 })
 
