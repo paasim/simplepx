@@ -81,8 +81,10 @@ test_that("px_dl works as expeted with a var-argument", {
   expect_true(all(vals_match))
 })
 
+
 ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_12ge.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
+  Sys.sleep(60) # to ensure that api limit of too many queries is not reached
   var <- px_var(ene_path) %>% filter(.data$Kuukausi == "1988M06", .data$Tiedot == "Hinta")
   df1 <- px_dl(ene_path, var)
   df2 <- px_dl(ene_path, var, na_omit = TRUE)
