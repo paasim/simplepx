@@ -83,7 +83,7 @@ test_that("px_dl works as expeted with a var-argument", {
 
 ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_12ge.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
-  var <- px_var(ene_path) %>% filter(.data$Kuukausi == "1988M06", Tiedot == "Hinta")
+  var <- px_var(ene_path) %>% filter(.data$Kuukausi == "1988M06", .data$Tiedot == "Hinta")
   df1 <- px_dl(ene_path, var)
   df2 <- px_dl(ene_path, var, na_omit = TRUE)
   expect_true(nrow(df2) > 0L)
