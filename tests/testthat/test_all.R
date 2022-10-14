@@ -1,7 +1,7 @@
 context("helpers")
 test_that("construct_body returns an expected result with an empty body", {
   expect_equal(as.character(construct_body(tibble())),
-               '{"query":[],"response":{"format":"json"}}')
+               '{"query":[],"response":{"format":"json-stat2"}}')
 })
 
 test_that("check_colname_comp errors with weird result", {
@@ -14,7 +14,7 @@ test_that("check_colname_comp errors with weird result", {
 context("px_nav")
 
 # path to a dataset for testing
-synt_path <- "StatFin/vrm/synt/statfin_synt_pxt_12dj.px"
+synt_path <- "StatFin/synt/statfin_synt_pxt_12dj.px"
 
 test_that("px_nav works as expected with the default argument", {
   df1 <- px_nav()
@@ -76,13 +76,13 @@ test_that("px_dl works as expeted with a var-argument", {
   df0 <- px_var(synt_path) %>%
     filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Miehet")
   df1 <- px_dl(synt_path, df0)
-  vals_match <- select(df0, -Tiedot) %>%
+  vals_match <- df0 %>%
     map2_lgl(select(df1, -matches("^value$")), ~setequal(.x, .y))
   expect_true(all(vals_match))
 })
 
 
-ene_path <- "StatFin/ene/ehi/statfin_ehi_pxt_12ge.px"
+ene_path <- "StatFin/ehi/statfin_ehi_pxt_12ge.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
   Sys.sleep(60) # to ensure that api limit of too many queries is not reached
   var <- px_var(ene_path) %>% filter(.data$Kuukausi == "1988M06", .data$Tiedot == "Hinta")
@@ -93,7 +93,6 @@ test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
 
   df_dims <- px_dl(ene_path, var, simplify_colnames = TRUE) %>%
     colnames()
-  df2_colnames_lower <- c("kuukausi", "polttoneste", "value")
+  df2_colnames_lower <- c("kuukausi", "polttoneste", "tiedot", "value")
   expect_identical(df_dims, df2_colnames_lower)
 })
-

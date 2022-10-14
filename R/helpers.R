@@ -15,7 +15,7 @@ construct_body <- function(var_code) {
       select(-.data$data)
   }
 
-  list(query = query, response = unbox(tibble(format = "json"))) %>%
+  list(query = query, response = unbox(tibble(format = "json-stat2"))) %>%
     toJSON()
 }
 

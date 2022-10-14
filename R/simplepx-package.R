@@ -8,7 +8,7 @@
 #' @name simplepx
 #'
 #' @importFrom dplyr bind_cols bind_rows distinct filter matches mutate mutate_all
-#' select
+#' rename_with select
 #' @importFrom httr content GET http_error http_status POST
 #' @importFrom jsonlite fromJSON toJSON unbox
 #' @importFrom magrittr "%>%" "%T>%"
