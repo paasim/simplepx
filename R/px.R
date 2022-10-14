@@ -24,7 +24,7 @@
 #' @param na_omit If `TRUE`, all missing values are omitted.
 #'  Defaults to `FALSE`.
 #' @param api The url to the API. Defaults to
-#'  `"https://pxnet2.stat.fi/PXWeb/api/v1/fi/"`, the Finnish PX-Web API of
+#'  `"https://statfin.stat.fi/PXWeb/api/v1/fi/"`, the Finnish PX-Web API of
 #'  Statistics Finland.
 #'
 #' @return `px_dl` and `px_var` always return a tibble.
@@ -33,26 +33,26 @@
 #'
 #' @examples
 #' # Navigate through the API
-#' px_nav()
+#' # px_nav()
 #' # check what data is available under StatFin
-#' px_nav("StatFin/")
+#' # px_nav("StatFin/")
 #' # navigate through the directories,
 #' # check what variables are available for population statistics
-#' var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
-#'               "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+#' # var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
+#' #               "https://statfin.stat.fi/PXWeb/api/v1/en/")
 #' # select years after 1900
-#' var_1900 <- dplyr::filter(var, Year >= 1900)
+#' # var_1900 <- dplyr::filter(var, Year >= 1900)
 #' # Download the data, starting from year 1900,
 #' # omitting the var-argument would download the data for all the years.
-#' data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
-#'               var = var_1900, simplify_colnames = TRUE,
-#'               api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+#' # data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
+#' #               var = var_1900, simplify_colnames = TRUE,
+#' #               api = "https://statfin.stat.fi/PXWeb/api/v1/en/")
 #'
 
 #' @rdname doc-all
 #' @export
 #'
-px_nav <- function(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
+px_nav <- function(path = "", api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
 
   url <- str_c(api, path)
   res <- GET(url)
@@ -72,7 +72,7 @@ px_nav <- function(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
 #' @rdname doc-all
 #' @export
 #'
-px_var <- function(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
+px_var <- function(path, api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
 
   res <- px_nav(path, api)
 
@@ -88,7 +88,7 @@ px_var <- function(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
 #'
 px_dl <- function(path, var = px_var(path, api),
                   simplify_colnames = FALSE, na_omit = FALSE,
-                  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/") {
+                  api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
 
   url <- str_c(api, path)
 
@@ -119,29 +119,20 @@ px_dl <- function(path, var = px_var(path, api),
   res_json <- content(res, "text", "application/json", "UTF-8") %>%
     fromJSON(simplifyVector = FALSE)
 
-  str_proc <- if (simplify_colnames) str_clean else identity
 
-  # get colnames of all dimensions of type d and t
-  col_names <- map_df(res_json$columns, ~.x[c("type", "text")]) %>%
-    filter(.data$type %in% c("d", "t")) %>%
-    pluck("text") %T>%
-    check_colname_comp(res_json)
+  dims <- res_json$dimension %>%
+    map(~unname(unlist(pluck(.x, "category", "label")))) %>%
+    reduce(expand_grid) %>%
+    set_names(res_json$id)
+  values <- res_json$value %>%
+    map(~if(is.null(.x)) NA else .x) %>%
+    unlist()
 
-  # map from code to text
-  var_maps_inv <- map(var_maps[col_names], ~set_names(names(.x), .x))
+  res_df <- bind_cols(dims, tibble(value = values))
 
-  # get the dimensions of the data
-  res_dims <- res_json$data %>%
-    map_df(~set_names(.x$key, str_proc(col_names)) %>% as_tibble()) %>%
-    map2(var_maps_inv, ~.y[.x]) %>%
-    bind_cols()
-
-  # get the actual values of the data
-  res_values <- map(res_json$data, "values") %>%
-    unlist() %>%
-    parse_number(na = c(".", ".."))
-
-  res_df <- bind_cols(res_dims, tibble(value = res_values))
+  if (simplify_colnames) {
+    res_df <- rename_with(res_df, str_clean)
+  }
 
   if (na_omit) drop_na(res_df) else res_df
 }

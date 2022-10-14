@@ -7,16 +7,16 @@
 \alias{px_dl}
 \title{Download data from the PX-Web API of Statistics Finland}
 \usage{
-px_nav(path = "", api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
+px_nav(path = "", api = "https://statfin.stat.fi/PXWeb/api/v1/fi/")
 
-px_var(path, api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/")
+px_var(path, api = "https://statfin.stat.fi/PXWeb/api/v1/fi/")
 
 px_dl(
   path,
   var = px_var(path, api),
   simplify_colnames = FALSE,
   na_omit = FALSE,
-  api = "https://pxnet2.stat.fi/PXWeb/api/v1/fi/"
+  api = "https://statfin.stat.fi/PXWeb/api/v1/fi/"
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ correspond to a partial path to a dataset (ie. an url that points to a
 directory). Defaults to \code{""}.}
 
 \item{api}{The url to the API. Defaults to
-\code{"https://pxnet2.stat.fi/PXWeb/api/v1/fi/"}, the Finnish PX-Web API of
+\code{"https://statfin.stat.fi/PXWeb/api/v1/fi/"}, the Finnish PX-Web API of
 Statistics Finland.}
 
 \item{var}{The values of the dimensions to be queried as a tibble. Can be
@@ -59,19 +59,19 @@ selected by filtering that tibble. See the examples for mode information.
 }
 \examples{
 # Navigate through the API
-px_nav()
+# px_nav()
 # check what data is available under StatFin
-px_nav("StatFin/")
+# px_nav("StatFin/")
 # navigate through the directories,
 # check what variables are available for population statistics
-var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
-              "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+# var <- px_var("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
+#               "https://statfin.stat.fi/PXWeb/api/v1/en/")
 # select years after 1900
-var_1900 <- dplyr::filter(var, Year >= 1900)
+# var_1900 <- dplyr::filter(var, Year >= 1900)
 # Download the data, starting from year 1900,
 # omitting the var-argument would download the data for all the years.
-data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
-              var = var_1900, simplify_colnames = TRUE,
-              api = "https://pxnet2.stat.fi/PXWeb/api/v1/en/")
+# data <- px_dl("StatFin/vrm/synt/statfin_synt_pxt_12dj.px",
+#               var = var_1900, simplify_colnames = TRUE,
+#               api = "https://statfin.stat.fi/PXWeb/api/v1/en/")
 
 }
