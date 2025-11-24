@@ -7,8 +7,8 @@
 #' @docType package
 #' @name simplepx
 #'
-#' @importFrom dplyr bind_cols bind_rows distinct filter matches mutate mutate_all
-#' rename_with select
+#' @importFrom dplyr all_of bind_cols bind_rows distinct filter matches mutate
+#' mutate_all rename_with select
 #' @importFrom httr content GET http_error http_status POST
 #' @importFrom jsonlite fromJSON toJSON unbox
 #' @importFrom purrr lift_dl map map_int map_df map2 map2_lgl modify_if pluck reduce set_names

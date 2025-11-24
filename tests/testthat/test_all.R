@@ -47,7 +47,7 @@ test_that("px_var works as expeted with a dataset-page", {
   expect_named(df1, res$variables$text)
   rows_exp <- map_int(res$variables$valueTexts, length) |> prod()
   expect_equal(nrow(df1), rows_exp)
-  vals_match <- map2_lgl(res$variables$valueTexts, df1, ~ setequal(.x, .y))
+  vals_match <- map2_lgl(res$variables$valueTexts, df1, setequal)
   expect_true(all(vals_match))
 })
 
@@ -74,17 +74,17 @@ test_that("px_dl works as expeted with a dataset-page", {
   vals_match <- map2_lgl(
     select(df0, cols),
     select(df1, cols),
-    ~ setequal(.x, .y)
+    setequal
   )
   expect_true(all(vals_match))
 })
 
 test_that("px_dl works as expeted with a var-argument", {
   df0 <- px_var(synt_path) |>
-    filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Miehet")
+    filter(Vuosi > 1990 & Sukupuoli == "Miehet")
   df1 <- px_dl(synt_path, df0)
   vals_match <- df0 |>
-    map2_lgl(select(df1, -matches("^value$")), ~ setequal(.x, .y))
+    map2_lgl(select(df1, -matches("^value$")), setequal)
   expect_true(all(vals_match))
 })
 
@@ -94,8 +94,8 @@ test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
   Sys.sleep(60) # to ensure that api limit of too many queries is not reached
   var <- px_var(ene_path) |>
     filter(
-      .data$Kuukausi %in% c("1988M12", "1989M01"),
-      .data$Tiedot == "Hinta, vuosimuutos (%)"
+      Kuukausi %in% c("1988M12", "1989M01"),
+      Tiedot == "Hinta, vuosimuutos (%)"
     )
   df1 <- px_dl(ene_path, var)
   df2 <- px_dl(ene_path, var, na_omit = TRUE)
