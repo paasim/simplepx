@@ -52,15 +52,17 @@
 #' @rdname doc-all
 #' @export
 #'
-px_nav <- function(path = "", api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
-
+px_nav <- function(
+  path = "",
+  api = "https://statfin.stat.fi/PXWeb/api/v1/fi/"
+) {
   url <- str_c(api, path)
   res <- GET(url)
 
   handle_req_errors(res)
   handle_http_errors(res)
 
-  res_json <- content(res, "text", "application/json", "UTF-8") %>% fromJSON()
+  res_json <- content(res, "text", "application/json", "UTF-8") |> fromJSON()
 
   if (is.data.frame(res_json)) {
     as_tibble(res_json, .name_repair = "unique")
@@ -73,41 +75,49 @@ px_nav <- function(path = "", api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") 
 #' @export
 #'
 px_var <- function(path, api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
-
   res <- px_nav(path, api)
 
-  if (!("variables" %in% names(res)))
+  if (!("variables" %in% names(res))) {
     stop("The page does not appear to contain a dataset.")
+  }
 
-  set_names(res$variables$valueTexts, res$variables$text) %>%
+  set_names(res$variables$valueTexts, res$variables$text) |>
     lift_dl(expand_grid)()
 }
 
 #' @rdname doc-all
 #' @export
 #'
-px_dl <- function(path, var = px_var(path, api),
-                  simplify_colnames = FALSE, na_omit = FALSE,
-                  api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
-
+px_dl <- function(
+  path,
+  var = px_var(path, api),
+  simplify_colnames = FALSE,
+  na_omit = FALSE,
+  api = "https://statfin.stat.fi/PXWeb/api/v1/fi/"
+) {
   url <- str_c(api, path)
 
   # get variable labels
   res_labs <- px_nav(path, api)
-  if (!("variables" %in% names(res_labs)))
+  if (!("variables" %in% names(res_labs))) {
     stop("The page does not appear to contain a dataset.")
+  }
 
   # this will only apply if var is non-null
   colname_map <- set_names(res_labs$variables$code, res_labs$variables$text)
-  var_maps <- map2(res_labs$variables$values, res_labs$variables$valueTexts,
-      ~set_names(.x, .y)) %>%
+  var_maps <- map2(
+    res_labs$variables$values,
+    res_labs$variables$valueTexts,
+    ~ set_names(.x, .y)
+  ) |>
     set_names(names(colname_map))
 
+  fix_cn <- function(x) set_names(x, colname_map[colnames(x)])
   # map from values to valueTexts
-  body <- map2(var, var_maps, ~.y[.x]) %>%
-    bind_cols() %>%
+  body <- map2(var, var_maps, ~ .y[.x]) |>
+    bind_cols() |>
     # map from text to code
-    (function(x) set_names(x, colname_map[colnames(x)])) %>%
+    fix_cn() |>
     construct_body()
 
   # get the actual data as JSON
@@ -116,16 +126,15 @@ px_dl <- function(path, var = px_var(path, api),
   handle_http_errors(res)
 
   res$content <- remove_bom(res$content)
-  res_json <- content(res, "text", "application/json", "UTF-8") %>%
+  res_json <- content(res, "text", "application/json", "UTF-8") |>
     fromJSON(simplifyVector = FALSE)
 
-
-  dims <- res_json$dimension %>%
-    map(~unname(unlist(pluck(.x, "category", "label")))) %>%
-    reduce(expand_grid, .name_repair = "minimal") %>%
+  dims <- res_json$dimension |>
+    map(~ unname(unlist(pluck(.x, "category", "label")))) |>
+    reduce(expand_grid, .name_repair = "minimal") |>
     set_names(res_json$id)
-  values <- res_json$value %>%
-    map(~if(is.null(.x)) NA else .x) %>%
+  values <- res_json$value |>
+    map(~ if (is.null(.x)) NA else .x) |>
     unlist()
 
   res_df <- bind_cols(dims, tibble(value = values))

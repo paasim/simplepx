@@ -1,12 +1,14 @@
 context("helpers")
 test_that("construct_body returns an expected result with an empty body", {
-  expect_equal(as.character(construct_body(tibble())),
-               '{"query":[],"response":{"format":"json-stat2"}}')
+  expect_equal(
+    as.character(construct_body(tibble())),
+    '{"query":[],"response":{"format":"json-stat2"}}'
+  )
 })
 
 test_that("check_colname_comp errors with weird result", {
   col_names <- "a"
-  res_json <- list(data = list(list(key = 1), list(key = c(1,2))))
+  res_json <- list(data = list(list(key = 1), list(key = c(1, 2))))
   expect_error(check_colname_comp(col_names, res_json), "Unexpected")
 })
 
@@ -43,9 +45,9 @@ test_that("px_var works as expeted with a dataset-page", {
   df1 <- px_var(synt_path)
   expect_true(is_tibble(df1))
   expect_named(df1, res$variables$text)
-  rows_exp <- map_int(res$variables$valueTexts, length) %>% prod()
+  rows_exp <- map_int(res$variables$valueTexts, length) |> prod()
   expect_equal(nrow(df1), rows_exp)
-  vals_match <- map2_lgl(res$variables$valueTexts, df1, ~setequal(.x, .y))
+  vals_match <- map2_lgl(res$variables$valueTexts, df1, ~ setequal(.x, .y))
   expect_true(all(vals_match))
 })
 
@@ -59,25 +61,30 @@ test_that("px_dl gives an error with a non-dataset-page", {
 })
 
 test_that("px_dl gives an error when HTTP status code is not 200", {
-  expect_error(px_dl("StatFin/asu/ashi/nj/statfin_ashi_pxt_112q.px"),
-               "returned with an error")
+  expect_error(
+    px_dl("StatFin/asu/ashi/nj/statfin_ashi_pxt_112q.px"),
+    "returned with an error"
+  )
 })
 
 test_that("px_dl works as expeted with a dataset-page", {
   df0 <- px_var(synt_path)
   df1 <- px_dl(synt_path, df0)
   cols <- intersect(names(df1), names(df0))
-  vals_match <- map2_lgl(select(df0, cols), select(df1, cols),
-                         ~setequal(.x, .y))
+  vals_match <- map2_lgl(
+    select(df0, cols),
+    select(df1, cols),
+    ~ setequal(.x, .y)
+  )
   expect_true(all(vals_match))
 })
 
 test_that("px_dl works as expeted with a var-argument", {
-  df0 <- px_var(synt_path) %>%
+  df0 <- px_var(synt_path) |>
     filter(.data$Vuosi > 1990 & .data$Sukupuoli == "Miehet")
   df1 <- px_dl(synt_path, df0)
-  vals_match <- df0 %>%
-    map2_lgl(select(df1, -matches("^value$")), ~setequal(.x, .y))
+  vals_match <- df0 |>
+    map2_lgl(select(df1, -matches("^value$")), ~ setequal(.x, .y))
   expect_true(all(vals_match))
 })
 
@@ -85,7 +92,7 @@ test_that("px_dl works as expeted with a var-argument", {
 ene_path <- "StatFin/ehi/statfin_ehi_pxt_12ge.px"
 test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
   Sys.sleep(60) # to ensure that api limit of too many queries is not reached
-  var <- px_var(ene_path) %>%
+  var <- px_var(ene_path) |>
     filter(
       .data$Kuukausi %in% c("1988M12", "1989M01"),
       .data$Tiedot == "Hinta, vuosimuutos (%)"
@@ -95,7 +102,7 @@ test_that("px_dl works as expeted with simplify_colnames, na_omit = TRUE", {
   expect_true(nrow(df2) > 0L)
   expect_true(nrow(df2) < nrow(df1))
 
-  df_dims <- px_dl(ene_path, var, simplify_colnames = TRUE) %>%
+  df_dims <- px_dl(ene_path, var, simplify_colnames = TRUE) |>
     colnames()
   df2_colnames_lower <- c("kuukausi", "polttoneste", "tiedot", "value")
   expect_identical(df_dims, df2_colnames_lower)
