@@ -122,7 +122,7 @@ px_dl <- function(path, var = px_var(path, api),
 
   dims <- res_json$dimension %>%
     map(~unname(unlist(pluck(.x, "category", "label")))) %>%
-    reduce(expand_grid) %>%
+    reduce(expand_grid, .name_repair = "minimal") %>%
     set_names(res_json$id)
   values <- res_json$value %>%
     map(~if(is.null(.x)) NA else .x) %>%

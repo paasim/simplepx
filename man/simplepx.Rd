@@ -2,6 +2,7 @@
 % Please edit documentation in R/simplepx-package.R
 \docType{package}
 \name{simplepx}
+\alias{simplepx-package}
 \alias{simplepx}
 \title{SIMPLEPX}
 \description{
