@@ -16,10 +16,10 @@ construct_body <- function(var_code) {
         selection = map(
           .data$data,
           # the actual values + {filter = item} for the JSON
-          ~ c(list(filter = unbox("item")), as.list(.x))
+          \(x) c(list(filter = unbox("item")), as.list(x))
         )
       ) |>
-      select(-.data$data)
+      select(-all_of("data"))
   }
 
   list(query = query, response = unbox(tibble(format = "json-stat2"))) |>
@@ -41,7 +41,7 @@ str_clean <- function(s) {
 
 # check that the result contains as many column names as there are columns
 check_colname_comp <- function(col_names, res_json) {
-  lengths <- map_int(res_json$data, ~ length(.x$key)) |> unique()
+  lengths <- map_int(res_json$data, \(x) length(x$key)) |> unique()
 
   if (any(lengths != length(col_names))) stop("Unexpected data format.")
 }

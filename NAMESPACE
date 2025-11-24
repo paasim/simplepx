@@ -3,6 +3,7 @@
 export(px_dl)
 export(px_nav)
 export(px_var)
+importFrom(dplyr,all_of)
 importFrom(dplyr,bind_cols)
 importFrom(dplyr,bind_rows)
 importFrom(dplyr,distinct)

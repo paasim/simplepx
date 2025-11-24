@@ -81,8 +81,8 @@ px_var <- function(path, api = "https://statfin.stat.fi/PXWeb/api/v1/fi/") {
     stop("The page does not appear to contain a dataset.")
   }
 
-  set_names(res$variables$valueTexts, res$variables$text) |>
-    lift_dl(expand_grid)()
+  reduce(res$variables$valueTexts, expand_grid, .name_repair = "minimal") |>
+    set_names(res$variables$text)
 }
 
 #' @rdname doc-all
@@ -108,13 +108,13 @@ px_dl <- function(
   var_maps <- map2(
     res_labs$variables$values,
     res_labs$variables$valueTexts,
-    ~ set_names(.x, .y)
+    set_names
   ) |>
     set_names(names(colname_map))
 
   fix_cn <- function(x) set_names(x, colname_map[colnames(x)])
   # map from values to valueTexts
-  body <- map2(var, var_maps, ~ .y[.x]) |>
+  body <- map2(var, var_maps, \(x, y) y[x]) |>
     bind_cols() |>
     # map from text to code
     fix_cn() |>
@@ -130,11 +130,11 @@ px_dl <- function(
     fromJSON(simplifyVector = FALSE)
 
   dims <- res_json$dimension |>
-    map(~ unname(unlist(pluck(.x, "category", "label")))) |>
+    map(\(x) unname(unlist(pluck(x, "category", "label")))) |>
     reduce(expand_grid, .name_repair = "minimal") |>
     set_names(res_json$id)
   values <- res_json$value |>
-    map(~ if (is.null(.x)) NA else .x) |>
+    map(\(x) if (is.null(x)) NA else x) |>
     unlist()
 
   res_df <- bind_cols(dims, tibble(value = values))
